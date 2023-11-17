@@ -66,6 +66,7 @@ namespace StateMachine
         {
             _xInput = Input.GetAxis("Horizontal");
             _jump = Input.GetButtonDown("Jump");
+
         }
 
 

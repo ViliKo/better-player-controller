@@ -11,102 +11,78 @@ public class PlatformerController2D : MonoBehaviour
     // collision
     public struct Collisions
     {
+        public bool HorizontalUp;
+        public bool HorizontalUpLower;
         public bool HorizontalBottomUp;
         public bool HorizontalBottom;
+
         public bool VerticalBottom;
     }
 
     public Collisions collisions;
 
+    private void PerformRaycast(Vector3 origin, Vector2 direction, float length, ref bool collisionFlag, bool debug = true)
+    {
+        RaycastHit2D hitResult = Physics2D.Raycast(origin, direction, length, layerMask);
+
+        if (hitResult.collider != null)
+        {
+            collisionFlag = true;
+            hit = hitResult.collider;
+            hitDistance = hitResult.distance;
+
+            if (debug)
+                Debug.DrawRay(origin, direction * length, Color.green);
+        }
+        else
+        {
+            collisionFlag = false;
+
+            if (debug)
+                Debug.DrawRay(origin, direction * length, Color.red);
+        }
+    }
 
     public void VerticalRaycasts(CapsuleCollider2D cc, float extraVerticalHeight)
     {
-        // Cast a ray straight down.
-
         Vector3 originPos = new Vector3(cc.bounds.center.x, cc.bounds.center.y, 0);
         float raycastDistance = cc.bounds.extents.y + extraVerticalHeight;
 
-        RaycastHit2D hit = Physics2D.Raycast(originPos, Vector2.down, raycastDistance, layerMask);
+        PerformRaycast(originPos, Vector2.down, raycastDistance, ref collisions.VerticalBottom);
+    }
 
-
-        if (hit.collider != null)
-        {
-            //Debug.Log("imfucinghererwehat");
-            Debug.DrawRay(originPos, new Vector2(0, Vector2.down.y * raycastDistance), Color.green);
-            collisions.VerticalBottom = true;
-        }
-
-        else
-        {
-            collisions.VerticalBottom = false;
-            Debug.DrawRay(originPos, new Vector3(0, Vector2.down.y * raycastDistance), Color.red);
-        }
-
-
-
-    }  // function
-
-
-
-    public void HorizontalRaycasts(float vectorDir, CapsuleCollider2D cc, float length, bool bottomRaycast = true, bool bottomUpRaycast = true, bool debug = true)
+    public void HorizontalRaycasts(float vectorDir, CapsuleCollider2D cc, float length, 
+        bool bottomRaycast = false, bool bottomUpRaycast = false, 
+        bool upRaycast = false, bool upLowerRaycast = false,
+        bool debug = true)
     {
-  
         Vector2 wallraycast = new Vector2(vectorDir, 0);
-        Vector3 originPosBottom = new Vector3(cc.bounds.center.x, (cc.bounds.center.y - cc.bounds.extents.y), 0);
-        Vector3 originPosBottomUp = new Vector3(cc.bounds.center.x, (cc.bounds.center.y - cc.bounds.extents.y)+.2f, 0);
-        Vector3 direction = new Vector3(cc.bounds.extents.x * wallraycast.x + length * wallraycast.x, 0, 0);
+        
 
+        Vector3 originPosBottom = new Vector3(cc.bounds.center.x, (cc.bounds.center.y - cc.bounds.extents.y), 0);
         if (bottomRaycast)
         {
-            RaycastHit2D hitBottom = Physics2D.Raycast(
-                originPosBottom,
-                wallraycast,
-                cc.bounds.extents.x + length,
-                layerMask);
-
-            if (hitBottom.collider != null)
-            {
-                collisions.HorizontalBottom = true;
-                hit = hitBottom.collider;
-                hitDistance = hitBottom.distance;
-
-                if (debug)
-                    Debug.DrawRay(originPosBottom, direction, Color.green);
-            }
-            else
-            {
-                collisions.HorizontalBottom = false;
-
-                if (debug)
-                    Debug.DrawRay(originPosBottom, direction, Color.red);
-            }
-                    
+            PerformRaycast(originPosBottom, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalBottom, debug);
         }
 
+
+        Vector3 originPosBottomUp = new Vector3(cc.bounds.center.x, (cc.bounds.center.y - cc.bounds.extents.y) + 0.2f, 0);
         if (bottomUpRaycast)
         {
-            RaycastHit2D hitBottomUp = Physics2D.Raycast(
-                originPosBottomUp,
-                wallraycast,
-                cc.bounds.extents.x + length,
-                layerMask);
-
-            if (hitBottomUp.collider != null)
-            {
-                collisions.HorizontalBottomUp = true;
-                hit = hitBottomUp.collider;
-                hitDistance = hitBottomUp.distance;
-                if (debug)
-                    Debug.DrawRay(originPosBottomUp, direction, Color.green);
-            }
-            else
-            {
-                collisions.HorizontalBottomUp = false;
-                if (debug)
-                    Debug.DrawRay(originPosBottomUp, direction, Color.red);
-            }
-                
+            PerformRaycast(originPosBottomUp, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalBottomUp, debug);
         }
 
-    } // function
+        Vector3 originPosUp = new Vector3(cc.bounds.center.x, (cc.bounds.center.y + cc.bounds.extents.y), 0);
+        if (upRaycast)
+        {
+            PerformRaycast(originPosUp, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalUp, debug);
+        }
+
+        Vector3 originPosUpLower = new Vector3(cc.bounds.center.x, (cc.bounds.center.y + cc.bounds.extents.y -0.2f), 0);
+        if (upLowerRaycast)
+        {
+            PerformRaycast(originPosUpLower, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalUpLower, debug);
+        }
+
+    }
 }

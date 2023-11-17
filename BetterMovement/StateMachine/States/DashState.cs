@@ -23,6 +23,9 @@ namespace StateMachine
         public float dashForce = 10f; // Speed of the dash
         private bool _isDashing;
         private float _initialPositionX;
+        public float rayHeight = .1f;
+
+
 
         public override void Init(PlayerController parent)
         {
@@ -38,6 +41,10 @@ namespace StateMachine
             #endregion
             _initialPositionX = _rb.position.x;
             _isDashing = true;
+
+            _rb.velocity = Vector2.zero;
+
+
         }
 
 
@@ -48,13 +55,35 @@ namespace StateMachine
 
         public override void Update()
         {
+            
+
+            _col.HorizontalRaycasts(-_sr.transform.localScale.x, _cc, dashDistance, false, true); // raycastaa suuntaan mihin dashaa
+            _col.VerticalRaycasts(_cc, rayHeight);
+
+            float newDashDistance;
+
+            if (_col.collisions.HorizontalBottomUp) // jos on osunut collideriin
+            {
+                newDashDistance = _col.hitDistance; // niin dashin etaisyys on colliderin etaisyys viela pienennettyna
+
+                if (newDashDistance < 1)  // jos colliderin etaisyys on vahempi kuin kaksi ala sitten dashaa
+                    _isDashing = false;
+
+            }
+            else
+                newDashDistance = dashDistance;  // muuten dashaus on normaali
+
+
+
+
+
 
             if (_isDashing)
             {
                 float distanceTraveled = Mathf.Abs(_rb.position.x - _initialPositionX);
 
-                if (distanceTraveled < dashDistance)
-                    _rb.AddForce(new Vector2(dashForce * -_sr.transform.localScale.x, 0f), ForceMode2D.Impulse);
+                if (distanceTraveled < newDashDistance)
+                    _rb.AddForce(new Vector2(dashForce * -_sr.transform.localScale.x * _rb.mass, 0f), ForceMode2D.Impulse);
                 else
                     StopDash();
             }
@@ -67,8 +96,12 @@ namespace StateMachine
 
         public override void ChangeState()
         {
-            if (!_isDashing)
+            if (_isDashing) return;
+
+            if (_col.collisions.VerticalBottom)
                 _runner.SetState(typeof(IdleState));
+            else
+                _runner.SetState(typeof(FallState));
         }
 
         public override void Exit()

@@ -20,6 +20,7 @@ namespace StateMachine
         private float _xInput;
         private bool _jump;
         private bool _jumpHeld;
+        private float _dash;
         public float inputTreshold = .15f;
 
         [SerializeField]
@@ -77,7 +78,7 @@ namespace StateMachine
 
         public override void Update()
         {
-            _col.VerticalRaycasts(_cc, _rayHeight); 
+  
             TimeUntilCheckGround();
             StartToIncreaseGravity();
 
@@ -89,7 +90,8 @@ namespace StateMachine
 
         public override void FixedUpdate() {
 
-            
+            _col.VerticalRaycasts(_cc, _rayHeight);
+
             if (Mathf.Abs(_xInput) > inputTreshold)
                 _rb.AddForce(new Vector2(_data.dir * _verticalMovement, _rb.velocity.y));
         }
@@ -104,6 +106,8 @@ namespace StateMachine
                 _runner.SetState(typeof(WalkState));
             if (_data.jumpsLeft >= 1 && _jump)
                 _runner.SetState(typeof(JumpState));
+            if (_dash > 0)
+                _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
 
         }
 
@@ -133,6 +137,7 @@ namespace StateMachine
             _xInput = Input.GetAxis("Horizontal");
             _jump = Input.GetButtonDown("Jump");
             _jumpHeld = !Input.GetButtonUp("Jump");
+            _dash = Input.GetAxisRaw("Dash");
             _data.dir = (_xInput < inputTreshold) ? -1 : (_xInput > inputTreshold ? 1 : 0);
         }
 

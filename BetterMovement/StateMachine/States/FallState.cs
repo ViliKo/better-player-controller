@@ -21,6 +21,7 @@ namespace StateMachine
         private float _xInput;
         private float _inputInWholeNumber;
         private bool _jump;
+        private float _dash;
         public float inputTreshold = .15f;
         public bool assistedOverCorner = false;
 
@@ -70,7 +71,7 @@ namespace StateMachine
             _xInput = Input.GetAxis("Horizontal");
             _inputInWholeNumber = (_xInput < inputTreshold) ? -1 : (_xInput > inputTreshold ? 1 : 0);
 
-
+            _dash = Input.GetAxisRaw("Dash");
             _jump = Input.GetButtonDown("Jump");
 
             //Debug.Log("why is this true_ " + _jump);
@@ -82,7 +83,8 @@ namespace StateMachine
 
         public override void Update()
         {
-            _col.VerticalRaycasts(_cc, _rayHeight);
+    
+          
 
             if (_rb.velocity.y < -3f)
                 _anim.ChangeAnimationState("player-air-falling");
@@ -103,6 +105,9 @@ namespace StateMachine
 
         public override void FixedUpdate()
         {
+
+            _col.VerticalRaycasts(_cc, _rayHeight);
+            _col.HorizontalRaycasts(-_sr.transform.localScale.x, _cc, .1f, false, false, true, true);
 
             if (Mathf.Abs(_xInput) > inputTreshold)
                 _rb.AddForce(new Vector2(_data.dir * _verticalMovement, _rb.velocity.y));
@@ -129,7 +134,11 @@ namespace StateMachine
                 _runner.SetState(typeof(SlideState));
             else if (_col.collisions.VerticalBottom)
                 _runner.SetState(typeof(IdleState));
+            if (_dash > 0)
+                _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
 
+            if (_col.collisions.HorizontalUp && _col.collisions.HorizontalUpLower)
+                _runner.SetState(typeof(WallSlideState));
         }
 
         public override void Exit()

@@ -85,12 +85,13 @@ namespace StateMachine
         }
 
         public override void Update() {
-            _col.VerticalRaycasts(_cc, rayHeight);
+
             _anim.AdjustSpriteRotation(_xInput);
             CoyoteTimer();
         }
 
         public override void FixedUpdate() {
+            _col.VerticalRaycasts(_cc, rayHeight);
             Move();
         }
 
@@ -109,10 +110,9 @@ namespace StateMachine
                 _runner.SetState(typeof(FallState));
 
             if (_dash > 0)
-            {
-                _runner.SetState(typeof(DashState));
-                Debug.Log("pressed dahs");
-            }
+                _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
+
+            
                 
         }
 

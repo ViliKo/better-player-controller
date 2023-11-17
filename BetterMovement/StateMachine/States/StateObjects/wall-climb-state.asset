@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 371d390fd2e59164fa74efc1beadbff2, type: 3}
-  m_Name: persistent-data
+  m_Script: {fileID: 11500000, guid: 386f7857aac587b44ba3e56956455a00, type: 3}
+  m_Name: wall-climb-state
   m_EditorClassIdentifier: 
-  maxJumps: 2
-  jumpsLeft: 2
-  dashCooldown: 0.8
-  dir: 1
+  climbSpeed: 3
+  inputTreshold: 0.15

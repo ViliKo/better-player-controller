@@ -10,6 +10,8 @@ namespace StateMachine
 
         public int maxJumps = 2;
         public int jumpsLeft = 2;
+        public float dashCooldown = .5f;
+        public float baseGravityScale = 2f;
 
 
         [HideInInspector]
