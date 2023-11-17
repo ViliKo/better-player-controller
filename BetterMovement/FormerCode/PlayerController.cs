@@ -530,20 +530,6 @@
 //        if (jumpInput == false) return;
 //        if (TouchingWall() == false) return; // jos osut seinään ja jump on true  (false || false)  (true && true)
 
-//        ChangeSoundState(jumpSound, 1f, false);
-
-//        isWallClimbing = false;
-
-//        float wallJumpSpeedXvector;
-//        float wallJumpSpeedYvector;
-
-//        wallJumpSpeedYvector = extraWallJumpSpeed + baseWallJumpSpeed;
-//        wallJumpSpeedXvector = wallJumpSpeedYvector * Mathf.Tan(Mathf.Deg2Rad * wallJumpAngle) * -dir;
-
-
-//        wallJumpSpeedVector = new Vector2(wallJumpSpeedXvector, wallJumpSpeedYvector+rb.velocity.y);
-
-//        rb.AddForce(wallJumpSpeedVector, ForceMode2D.Impulse);
 
 
 //        jumpInput = false;

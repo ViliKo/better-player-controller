@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04fbae2267e2d094da68bbcbe7033340, type: 3}
   m_Name: wall-slide-state
   m_EditorClassIdentifier: 
-  inputTreshold: 0.15
-  visualizer: 1
+  slideSpeed: 2
+  rayHeight: 0.1
+  wallSlideAnimation: {fileID: 7400000, guid: aaae6da11396748478c9923a6190b27f, type: 2}
+  visualizer: 0
   _rayHeight: 0.1
+  inputTreshold: 0.15

@@ -18,21 +18,17 @@ namespace StateMachine
 
         #endregion
 
-        private float _yInput;
-        private bool _jump;
-        public float inputTreshold = .15f;
-
-        [SerializeField]
-        private bool visualizer = true;
-        private bool _isWallSliding = false;
-
-
+        [Header("Wall Slide Settings")]
         public float slideSpeed = 2f;
-
+        public float rayHeight = .1f;
+        public AnimationClip wallSlideAnimation;
+        public bool visualizer = true;
 
         [SerializeField]
         private float _rayHeight = .1f;
-
+        private float _yInput;
+        private bool _jump;
+        public float inputTreshold = .15f;
 
 
 
@@ -51,8 +47,7 @@ namespace StateMachine
 
             #endregion
 
-
-            _isWallSliding = true;
+            _anim.ChangeAnimationState(wallSlideAnimation.name);
 
             if (visualizer)
                 _sr.color = Color.magenta;
@@ -62,31 +57,16 @@ namespace StateMachine
         {
             _yInput = Input.GetAxis("Vertical");
             _jump = Input.GetButtonDown("Jump");
-
-
-
-
         }
 
 
 
 
-        public override void Update()
-        {
-
-            
-            
-
-
-
-
-
-        }
+        public override void Update() { }
 
         public override void FixedUpdate()
         {
             _col.VerticalRaycasts(_cc, _rayHeight);
-
             _rb.velocity = new Vector2(0, -slideSpeed);
         }
 
@@ -95,16 +75,14 @@ namespace StateMachine
         {
             if (_yInput > inputTreshold)
                 _runner.SetState(typeof(WallClimbState));
-
-          
-
-        }
-
-        public override void Exit()
-        {
- 
+            if (_col.collisions.VerticalBottom) 
+                _runner.SetState(typeof(IdleState));
+            if (_jump)
+                _runner.SetState(typeof(WallJumpState));
 
         }
+
+        public override void Exit() {}
     }
 }
 

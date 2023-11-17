@@ -23,7 +23,6 @@ namespace StateMachine
         {
             if (_currentState == newState) return;
 
-            //Debug.Log(newState);
             _anim.Play(newState);
             _currentState = newState;
         }
@@ -35,6 +34,10 @@ namespace StateMachine
                 _transform.localScale = new Vector3(-Mathf.Sign(xInput), 1, 1);
             }
         }
+
+        public bool isAnimationFinished() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1;
+       
+        
 
 
     }

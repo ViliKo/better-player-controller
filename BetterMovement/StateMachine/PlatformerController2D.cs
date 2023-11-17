@@ -61,28 +61,19 @@ public class PlatformerController2D : MonoBehaviour
 
         Vector3 originPosBottom = new Vector3(cc.bounds.center.x, (cc.bounds.center.y - cc.bounds.extents.y), 0);
         if (bottomRaycast)
-        {
             PerformRaycast(originPosBottom, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalBottom, debug);
-        }
-
-
+        
         Vector3 originPosBottomUp = new Vector3(cc.bounds.center.x, (cc.bounds.center.y - cc.bounds.extents.y) + 0.2f, 0);
         if (bottomUpRaycast)
-        {
             PerformRaycast(originPosBottomUp, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalBottomUp, debug);
-        }
 
         Vector3 originPosUp = new Vector3(cc.bounds.center.x, (cc.bounds.center.y + cc.bounds.extents.y), 0);
         if (upRaycast)
-        {
             PerformRaycast(originPosUp, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalUp, debug);
-        }
 
         Vector3 originPosUpLower = new Vector3(cc.bounds.center.x, (cc.bounds.center.y + cc.bounds.extents.y -0.2f), 0);
         if (upLowerRaycast)
-        {
             PerformRaycast(originPosUpLower, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalUpLower, debug);
-        }
 
     }
 }

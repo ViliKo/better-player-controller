@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace StateMachine
 {
-
+    
     [CreateAssetMenu(menuName = "States/Player/WallClimb")]
     public class WallClimbState : State<PlayerController>
     {
@@ -19,9 +19,18 @@ namespace StateMachine
 
         #endregion
 
-        private float _yInput;
+        [Header("Wall Climb settings")]
         public float climbSpeed = 3f;
         public float inputTreshold = .15f;
+        public AnimationClip WallClimbAnimation;
+        public bool visualizer = false;
+
+
+        // yksityiset muuttujat
+        private float _yInput;
+        private bool _jump;
+
+
 
         public override void Init(PlayerController parent)
         {
@@ -36,8 +45,10 @@ namespace StateMachine
 
             #endregion
 
-            _rb.gravityScale = 0;
-            Debug.Log("Im on wall climb state");
+            _rb.gravityScale = 0; // seinakiipeillyssa pitaa ottaa gravitaatio pois
+
+            if (visualizer)
+                Debug.Log("Im on wall climb state");
         }
 
 
@@ -45,44 +56,41 @@ namespace StateMachine
         public override void CaptureInput()
         {
             _yInput = Input.GetAxis("Vertical");
+            _jump = Input.GetButtonDown("Jump");
         }
 
+
+        public override void Update() {}
+
+        public override void FixedUpdate() => WallClimb();
+
+        
         public override void ChangeState()
         {
-            if (_yInput < inputTreshold)
+            if (_yInput < inputTreshold) // jos inputti on pienempi kuin treshold ala kiipeaa
                 _runner.SetState(typeof(WallSlideState));
+            if (_jump)  // jos painat hyppya mene seina hyppyyn
+                _runner.SetState(typeof(WallJumpState));
         }
 
         public override void Exit()
         {
-            _rb.gravityScale = _data.baseGravityScale;
+            _rb.gravityScale = _data.baseGravityScale; // pois lahdossa laita gravitaatio takaisin
         }
 
-        public override void FixedUpdate()
-        {
-            WallClimb();
 
-        }
-
-        public override void Update()
-        {
-           
-        }
 
         private void WallClimb()
         {
+            // Ota kiipeamisen suunta jos se on isompi kuin imput treshold sitten kiipea
+            float positiveYInput = (_yInput > inputTreshold) ? 1 : 0;
 
-            // Get vertical input for climbing up or down
-            
-
-            // Calculate the climb direction
-            Vector2 climbDirection = new Vector2(0, _yInput).normalized;
-
-            // Apply the climb direction multiplied by the climb speed
-            _rb.velocity = new Vector2(0, climbDirection.y * climbSpeed);
-
- 
-
+            if (!(positiveYInput == 0))  // laita se rigidbodyn nopeuteen
+            {
+                _rb.velocity = new Vector2(0, positiveYInput * climbSpeed);
+                _anim.ChangeAnimationState(WallClimbAnimation.name);
+            }
+                
         }
 
 

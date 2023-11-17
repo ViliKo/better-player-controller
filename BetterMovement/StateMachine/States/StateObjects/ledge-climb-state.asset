@@ -9,10 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 386f7857aac587b44ba3e56956455a00, type: 3}
-  m_Name: wall-climb-state
+  m_Script: {fileID: 11500000, guid: e2e949c8178e8a841b948b30b61efce9, type: 3}
+  m_Name: ledge-climb-state
   m_EditorClassIdentifier: 
-  climbSpeed: 3
-  inputTreshold: 0.15
-  WallClimbAnimation: {fileID: 7400000, guid: e8f3383daca910849b471e717a5269df, type: 2}
-  visualizer: 0

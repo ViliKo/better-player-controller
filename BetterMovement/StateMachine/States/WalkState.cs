@@ -41,10 +41,6 @@ namespace StateMachine
         
 
 
- 
-
-        string message;
-
 
 
         public override void Init(PlayerController parent)

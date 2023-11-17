@@ -99,8 +99,9 @@ namespace StateMachine
 
 
 
-            AssistOverCorner();
             
+            _anim.AdjustSpriteRotation(_xInput);
+
         }
 
         public override void FixedUpdate()
@@ -111,6 +112,8 @@ namespace StateMachine
 
             if (Mathf.Abs(_xInput) > inputTreshold)
                 _rb.AddForce(new Vector2(_data.dir * _verticalMovement, _rb.velocity.y));
+
+            AssistOverCorner();
         }
 
 
@@ -128,17 +131,18 @@ namespace StateMachine
                 _data.jumpsLeft = _data.maxJumps;
                 _runner.SetState(typeof(JumpState));
             }
-            else if (_col.collisions.VerticalBottom && Mathf.Abs(_xInput) > inputTreshold)
-                _runner.SetState(typeof(WalkState));
-            else if (_col.collisions.VerticalBottom && Mathf.Abs(_xInput) < inputTreshold && Mathf.Abs(_rb.velocity.x) > 0.1)
-                _runner.SetState(typeof(SlideState));
             else if (_col.collisions.VerticalBottom)
-                _runner.SetState(typeof(IdleState));
+                _runner.SetState(typeof(LandState));
+   
             if (_dash > 0)
                 _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
 
-            if (_col.collisions.HorizontalUp && _col.collisions.HorizontalUpLower)
+            if (_col.collisions.HorizontalUp && _col.collisions.HorizontalUpLower){
+                _col.collisions.HorizontalBottomUp = false;
+                _col.collisions.HorizontalUpLower = false;
                 _runner.SetState(typeof(WallSlideState));
+            }
+                
         }
 
         public override void Exit()
@@ -158,7 +162,7 @@ namespace StateMachine
 
         private void AssistOverCorner()
         {
-
+            // TODO: assis over corner function
         }
     }
 }

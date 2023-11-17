@@ -83,7 +83,10 @@ namespace StateMachine
                 float distanceTraveled = Mathf.Abs(_rb.position.x - _initialPositionX);
 
                 if (distanceTraveled < newDashDistance)
+                {
                     _rb.AddForce(new Vector2(dashForce * -_sr.transform.localScale.x * _rb.mass, 0f), ForceMode2D.Impulse);
+                    _anim.ChangeAnimationState("player-dash");
+                }  
                 else
                     StopDash();
             }

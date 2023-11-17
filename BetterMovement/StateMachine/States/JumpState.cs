@@ -81,6 +81,7 @@ namespace StateMachine
   
             TimeUntilCheckGround();
             StartToIncreaseGravity();
+            _anim.AdjustSpriteRotation(_xInput);
 
             if (visualizer)
                 Debug.Log("Jump is held: " + _jumpHeld);
