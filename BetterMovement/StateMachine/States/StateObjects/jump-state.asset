@@ -12,9 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69128fdf5d3c7b64db1bc892912d2941, type: 3}
   m_Name: jump-state
   m_EditorClassIdentifier: 
-  inputTreshold: 0.15
+  xInputTreshold: 0.15
+  dashInputTreshold: 0.15
   visualizer: 0
   _jumpHeight: 1.1
-  _verticalMovement: 50
   _rayHeight: 0.05
   timeUntilCheckGround: 0.2
+  accelInAir: 0.068
+  deccelInAir: 0.045
+  jumpAnimation: {fileID: 7400000, guid: 5ada3be4a1dfd0d4f8b14f441fcabdd9, type: 2}
+  moveMaxSpeed: 6
+  moveAcceleration: 2
+  moveDecceleration: 0.5

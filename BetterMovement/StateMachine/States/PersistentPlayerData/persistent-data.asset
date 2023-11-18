@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxJumps: 2
   jumpsLeft: 2
-  dashCooldown: 0.8
+  dashCooldown: 1.2
+  baseGravityScale: 2
   dir: 1

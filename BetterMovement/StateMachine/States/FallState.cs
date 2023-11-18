@@ -19,15 +19,14 @@ namespace StateMachine
         #endregion
 
         private float _xInput;
-        private float _inputInWholeNumber;
         private bool _jump;
         private float _dash;
         public float inputTreshold = .15f;
         public bool assistedOverCorner = false;
+        public float landingSlowdown = 0;
 
         [SerializeField]
         private bool visualizer = true;
-
 
         [SerializeField]
         private float _verticalMovement = 50f;
@@ -35,14 +34,9 @@ namespace StateMachine
         [SerializeField]
         private float _rayHeight = .1f;
 
-
         public bool _pressedJump = false;
         public float _jumpBufferTime = .4f;
         private float _jumpBufferTimer;
-
-
-
-
 
         public override void Init(PlayerController parent)
         {
@@ -57,7 +51,10 @@ namespace StateMachine
 
             #endregion
 
+            _rb.gravityScale = 2;
             _pressedJump = false;
+
+
             _jumpBufferTimer = 0;
             _rb.gravityScale = 5;
             _anim.ChangeAnimationState("player-air-peak");
@@ -69,23 +66,13 @@ namespace StateMachine
         public override void CaptureInput()
         {
             _xInput = Input.GetAxis("Horizontal");
-            _inputInWholeNumber = (_xInput < inputTreshold) ? -1 : (_xInput > inputTreshold ? 1 : 0);
-
             _dash = Input.GetAxisRaw("Dash");
             _jump = Input.GetButtonDown("Jump");
-
-            //Debug.Log("why is this true_ " + _jump);
-
-
-
         }
 
 
         public override void Update()
         {
-    
-          
-
             if (_rb.velocity.y < -3f)
                 _anim.ChangeAnimationState("player-air-falling");
 
@@ -97,25 +84,16 @@ namespace StateMachine
             if (_pressedJump)
                 JumpBufferTimer();
 
-
-
-            
             _anim.AdjustSpriteRotation(_xInput);
-
         }
 
         public override void FixedUpdate()
         {
-
             _col.VerticalRaycasts(_cc, _rayHeight);
             _col.HorizontalRaycasts(-_sr.transform.localScale.x, _cc, .1f, false, false, true, true);
 
-            if (Mathf.Abs(_xInput) > inputTreshold)
-                _rb.AddForce(new Vector2(_data.dir * _verticalMovement, _rb.velocity.y));
-
             AssistOverCorner();
         }
-
 
         public override void ChangeState()
         {
@@ -125,15 +103,16 @@ namespace StateMachine
                 _runner.SetState(typeof(JumpState));
             else if (_pressedJump && (_jumpBufferTimer < _jumpBufferTime && _col.collisions.VerticalBottom))
             {
-                Debug.Log("Pressed before jump buffer timer is max");
                 _jumpBufferTimer = 0;
                 _pressedJump = false;
                 _data.jumpsLeft = _data.maxJumps;
                 _runner.SetState(typeof(JumpState));
             }
-            else if (_col.collisions.VerticalBottom)
+            else if(_col.collisions.VerticalBottom)
+            {
                 _runner.SetState(typeof(LandState));
-   
+            }
+
             if (_dash > 0)
                 _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
 
@@ -142,13 +121,13 @@ namespace StateMachine
                 _col.collisions.HorizontalUpLower = false;
                 _runner.SetState(typeof(WallSlideState));
             }
-                
+
+
         }
 
         public override void Exit()
         {
-            _rb.gravityScale = 2;
-            
+
         }
 
 
@@ -163,6 +142,11 @@ namespace StateMachine
         private void AssistOverCorner()
         {
             // TODO: assis over corner function
+        }
+
+        private void Move()
+        {
+
         }
     }
 }

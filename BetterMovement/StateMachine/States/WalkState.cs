@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace StateMachine
 {
@@ -13,33 +14,33 @@ namespace StateMachine
         private CapsuleCollider2D _cc;
         private SpriteRenderer _sr;
         private PlayerAnimation _anim;
-
+        private Text _transition;
         #endregion
+
+
+        [Header("Movement State settings")]
+        public float xInputTreshold = .15f;
+        public float dashInputTreshold = .15f;
+        public float rayHeight = .1f;
+        public bool visualizer = true;
+        public float coyoteTime = .2f;
+        public AnimationClip walkAnimation;
+        public AnimationClip slideAnimation;
+        public float runMaxSpeed = 8f; //Target speed we want the player to reach.
+        public float runAcceleration = 8f; //Time (approx.) time we want it to take for the player to accelerate from 0 to the runMaxSpeed.
+        public float runDecceleration = 0.5f; //Time (approx.) we want it to take for the player to accelerate from runMaxSpeed to 0.
+
 
 
         private float _xInput;
         private bool _jump;
-        private float _dash;
-
-
-        public float inputTreshold = .15f;
-        private float _inputInWholeNumber;
-        public float rayHeight = .1f;
-        public bool visualizer = true;
-
-
-
-        public float coyoteTime = .2f;
-        private float coyoteTimer;
-
-
-
-
-
-        public float runMaxSpeed = 8f; //Target speed we want the player to reach.
-        public float runAcceleration = 8f; //Time (approx.) time we want it to take for the player to accelerate from 0 to the runMaxSpeed.
-        
-
+        private bool _dash;
+        private float _dashInput;
+        private float _xInputInWholeNumber;
+        private float _coyoteTimer;
+        private float _accelRate;
+        private float _runDeccelAmount; //Actual force (multiplied with speedDiff) applied to the player .
+        private float _runAccelAmount; //The actual force (multiplied with speedDiff) applied to the player.
 
 
 
@@ -53,97 +54,141 @@ namespace StateMachine
             if (_sr == null) _sr = parent.GetComponentInChildren<SpriteRenderer>();
             if (_anim == null) _anim = parent.PlayerAnimation;
             if (_data == null) _data = parent.PersistentPlayerData;
+            if (_transition == null) _transition = parent.StateTransition;
 
             #endregion
 
-
+            _coyoteTimer = 0;
+            _jump = false;
             _data.jumpsLeft = _data.maxJumps;
+            _dash = false;
+            _dashInput = 0;
+            
 
+            Calculations();
 
-            if(visualizer)
-            {
+            if (visualizer)
                 _sr.color = Color.green;
-                Debug.Log("<color=green>Started a walk state</color>");
-
-            }
-
-
-            _anim.ChangeAnimationState("player-walk");
+            
         }
 
         public override void CaptureInput()
         {
-            _xInput = Input.GetAxis("Horizontal");
-            _inputInWholeNumber = (_xInput < inputTreshold) ? -1 : (_xInput > inputTreshold ? 1 : 0);
-            _jump = Input.GetButtonDown("Jump");
+            if (Mathf.Abs(Input.GetAxis("Horizontal")) > xInputTreshold)
+            {
+                _xInput = Input.GetAxis("Horizontal");
+            } else
+            {
+                _xInput = 0;
+            }
 
-            _dash = Input.GetAxisRaw("Dash");
+
+            
+            
+
+
+            if (Input.GetAxisRaw("Dash") > dashInputTreshold)
+            {
+                _dash = true;
+            }
+            if (Input.GetButtonDown("Jump"))
+                _jump = true;
+
         }
 
         public override void Update() {
-
             _anim.AdjustSpriteRotation(_xInput);
             CoyoteTimer();
         }
 
         public override void FixedUpdate() {
             _col.VerticalRaycasts(_cc, rayHeight);
+            
             Move();
         }
 
         public override void ChangeState()
         {
-            if (Mathf.Abs(_xInput) < inputTreshold && Mathf.Abs(_rb.velocity.x) > 0.1)
-                _runner.SetState(typeof(SlideState));
-
-            if (Mathf.Abs(_rb.velocity.x) <= 0.02)
+       
+            if (Mathf.Abs(_rb.velocity.x) <= 0.02 && Mathf.Abs(_xInput) < xInputTreshold)
+            {
+                _transition.text = "Kavely -> horisonttaalinen nopeus oli vahemman kuin 0.02 -> Lepo";
                 _runner.SetState(typeof(IdleState));
+            }
+                
 
-            if (coyoteTimer < coyoteTime && _jump)
+            if (_coyoteTimer < coyoteTime && _jump)
+            {
+                _transition.text = "Kavely -> coyote ajastin oli pienempi kuin maaritetty aika ja hyppya on painettu -> Hyppy";
                 _runner.SetState(typeof(JumpState));
-
-            if (!_col.collisions.VerticalBottom && !_jump)
-                _runner.SetState(typeof(FallState));
-
-            if (_dash > 0)
-                _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
-
+            }
+                
             
                 
+
+            if (!_col.collisions.VerticalBottom && !_jump)
+            {
+                _transition.text = "Kavely -> maahan osoittava raycast ei osunut ja ei ole painanut hyppya -> Putoaminen";
+                _runner.SetState(typeof(FallState));
+            }
+
+
+            if (_dash)
+            {
+                _transition.text = "Kavely -> dash nappia painettu -> Dash";
+                _dash = false;
+                _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
+            }
+                
+
+
+
         }
 
 
         public override void Exit() {
-            coyoteTimer = 0;
+
         }
 
 
         private void CoyoteTimer()
         {
             if (!_col.collisions.VerticalBottom)
-                coyoteTimer += Time.deltaTime;
+                _coyoteTimer += Time.deltaTime;
 
         } // function
 
         public void Move()
         {
-
-            //Calculate the direction we want to move in and our desired velocity
-            float targetSpeed = _inputInWholeNumber * runMaxSpeed;
-            if (visualizer) Debug.Log("max speed is: " + targetSpeed);
-
-            //Calculate difference between current velocity and desired velocity
+            float targetSpeed = _xInput * runMaxSpeed;
             float speedDif = targetSpeed - _rb.velocity.x;
-            if (visualizer) Debug.Log("speed difference is: " + speedDif);
+            
+            if (Mathf.Abs(targetSpeed) > 1f)
+            {
+                _anim.ChangeAnimationState(walkAnimation.name);
+                _accelRate = _runAccelAmount;
+            }
+            else
+            {
+                _anim.ChangeAnimationState(slideAnimation.name);
+                _accelRate = _runDeccelAmount;
+            }
 
-            //Calculate force along x-axis to apply to thr player
-            float movement = speedDif * runAcceleration;
-            if (visualizer) Debug.Log("movement is: " + movement);
-
-            //Convert this to a vector and apply to rigidbody
+            float movement = speedDif * _accelRate;
             _rb.AddForce(movement * Vector2.right * _rb.mass, ForceMode2D.Force);
-            //PhysicsUtilities.ApplyForceToReachVelocity(_rb, new Vector2(targetSpeed, _rb.velocity.y), 10000);
-            if (visualizer) Debug.Log("Final speed is: " + _rb.velocity.x);
         }
+
+        private void Calculations()
+        {
+            _runAccelAmount = (50 * runAcceleration) / runMaxSpeed;
+            _runDeccelAmount = (50 * runDecceleration) / runMaxSpeed;
+
+            #region Variable Ranges
+            runAcceleration = Mathf.Clamp(runAcceleration, 0.01f, runMaxSpeed);
+            runDecceleration = Mathf.Clamp(runDecceleration, 0.01f, runMaxSpeed);
+            #endregion
+        }
+
+
     }
 }

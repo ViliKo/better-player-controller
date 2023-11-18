@@ -46,6 +46,7 @@ namespace StateMachine
             #endregion
 
             _rb.gravityScale = 0; // seinakiipeillyssa pitaa ottaa gravitaatio pois
+            _data.jumpsLeft = _data.maxJumps;
 
             if (visualizer)
                 Debug.Log("Im on wall climb state");
@@ -70,7 +71,9 @@ namespace StateMachine
             if (_yInput < inputTreshold) // jos inputti on pienempi kuin treshold ala kiipeaa
                 _runner.SetState(typeof(WallSlideState));
             if (_jump)  // jos painat hyppya mene seina hyppyyn
-                _runner.SetState(typeof(WallJumpState));
+                _runner.SetState(typeof(JumpState));
+
+
         }
 
         public override void Exit()

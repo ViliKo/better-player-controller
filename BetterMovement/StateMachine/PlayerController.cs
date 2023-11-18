@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Utils.StateMachine;
 
 namespace StateMachine
@@ -7,9 +8,11 @@ namespace StateMachine
     {
 
         public PlayerAnimation PlayerAnimation;
+        public AudioSource PlayerSound;
         public PersistentPlayerData PersistentPlayerData;
+        public Text StateTransition;
 
-        
+
 
         protected override void Awake()
         {

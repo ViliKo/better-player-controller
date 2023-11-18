@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc0b97d51c5c2de4d9075d988ab22fa7, type: 3}
   m_Name: walk-state
   m_EditorClassIdentifier: 
-  inputTreshold: 0.3
+  xInputTreshold: 0.15
+  dashInputTreshold: 0.5
   rayHeight: 0.05
   visualizer: 0
   coyoteTime: 0.2
-  runMaxSpeed: 10
+  walkAnimation: {fileID: 7400000, guid: ca564680d8b728f46acf81749e92a708, type: 2}
+  slideAnimation: {fileID: 7400000, guid: bd96ff4f3782ce04fa2c169740157360, type: 2}
+  runMaxSpeed: 8
   runAcceleration: 3
+  runDecceleration: 2

@@ -111,7 +111,11 @@ namespace StateMachine
                     _runner.SetState(typeof(WalkState));
 
             if (_jump && _col.collisions.VerticalBottom)
+            {
+                Debug.Log(_jump + ": why the hell would this be true");
                 _runner.SetState(typeof(JumpState));
+            }
+                
 
             if (!_col.collisions.VerticalBottom && !_jump)
                 _runner.SetState(typeof(FallState));

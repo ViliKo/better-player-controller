@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace StateMachine
@@ -16,25 +18,15 @@ namespace StateMachine
 
         #endregion
 
-
         private float _xInput;
-
-
         public float inputTreshold = .15f;
-        private float _inputInWholeNumber;
-        public bool visualizer = true;
+        public float landingSlowdown = 0;
 
+        [SerializeField]
+        private bool visualizer = true;
+        private bool _landingExacuted;
+        private bool _isLandingFinished;
         public AnimationClip landAnimation;
-
-        public float runMaxSpeed = 8f; //Target speed we want the player to reach.
-        public float runAcceleration = 8f; //Time (approx.) time we want it to take for the player to accelerate from 0 to the runMaxSpeed.
-
-
-
-
-
-
-
 
 
         public override void Init(PlayerController parent)
@@ -50,73 +42,67 @@ namespace StateMachine
 
             #endregion
 
-            _anim.ChangeAnimationState(landAnimation.name);
-
-            _rb.velocity = Vector2.zero;
-
-            _data.jumpsLeft = _data.maxJumps;
-
+            _rb.gravityScale = 2;
+            _landingExacuted = false;
+            _isLandingFinished = false;
 
             if (visualizer)
-            {
-                _sr.color = Color.green;
-                Debug.Log("<color=green>Started a land state</color>");
-
-            }
-
-            
+                _sr.color = Color.magenta;
         }
 
         public override void CaptureInput()
         {
             _xInput = Input.GetAxis("Horizontal");
-            _inputInWholeNumber = (_xInput < inputTreshold) ? -1 : (_xInput > inputTreshold ? 1 : 0);
-
         }
+
 
         public override void Update()
         {
-            Debug.Log("Is animation finished: " + _anim.isAnimationFinished());
             _anim.AdjustSpriteRotation(_xInput);
 
-
+            if (_landingExacuted && _anim.getCurrentAnimationName(landAnimation.name))
+                _isLandingFinished = _anim.isAnimationFinished();
         }
 
         public override void FixedUpdate()
         {
-            Move();
+            Land();
         }
 
-        public override void ChangeState()
+        private void Land()
         {
-
-            if (_anim.isAnimationFinished())
+            if (_col.collisions.VerticalBottom && !_landingExacuted)
             {
-                
-                if (Mathf.Abs(_xInput) > inputTreshold)
-                    _runner.SetState(typeof(WalkState));
-                if (Mathf.Abs(_xInput) < inputTreshold && Mathf.Abs(_rb.velocity.x) > 0.1)
-                    _runner.SetState(typeof(SlideState));
-                if (Mathf.Abs(_rb.velocity.x) <= 0.02)
-                    _runner.SetState(typeof(IdleState));
+                _anim.ChangeAnimationState(landAnimation.name);
+                _rb.velocity = new Vector2(_rb.velocity.x, 0);
+                _landingExacuted = true;
             }
         }
 
 
-        public override void Exit()
+        public override void ChangeState()
         {
+            if (_isLandingFinished)
+            {
+                _landingExacuted = false;
+                _isLandingFinished = false;
+                _data.jumpsLeft = _data.maxJumps;
 
+                if (Mathf.Abs(_xInput) > inputTreshold)
+                    _runner.SetState(typeof(WalkState));
+                else
+                    _runner.SetState(typeof(IdleState));
+            }
+            else if (!_col.collisions.VerticalBottom && _rb.velocity.y < 0)
+                _runner.SetState(typeof(FallState));
         }
 
-
-
-
-        public void Move()
+        public override void Exit()
         {
-
-
-            _rb.AddForce(_inputInWholeNumber * Vector2.right * _rb.mass, ForceMode2D.Force);
-
+            _landingExacuted = false;
+            _isLandingFinished = false;
         }
     }
 }
+
+

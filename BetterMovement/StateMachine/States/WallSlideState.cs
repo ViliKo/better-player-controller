@@ -48,6 +48,7 @@ namespace StateMachine
             #endregion
 
             _anim.ChangeAnimationState(wallSlideAnimation.name);
+            _data.jumpsLeft = _data.maxJumps;
 
             if (visualizer)
                 _sr.color = Color.magenta;
