@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2e949c8178e8a841b948b30b61efce9, type: 3}
   m_Name: ledge-climb-state
   m_EditorClassIdentifier: 
+  offset1: {x: 0.001224041, y: 0.491}
+  offset2: {x: 0.4152241, y: 0.7891781}
+  ledgeClimbAnimation: {fileID: 7400000, guid: e337fdbf9fe39814aa94a783a4b6c422, type: 2}

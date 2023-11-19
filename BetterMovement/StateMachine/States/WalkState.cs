@@ -110,7 +110,7 @@ namespace StateMachine
         public override void ChangeState()
         {
        
-            if (Mathf.Abs(_rb.velocity.x) <= 0.02 && Mathf.Abs(_xInput) < xInputTreshold)
+            if (Mathf.Abs(_rb.velocity.x) <= 0.02)
             {
                 _transition.text = "Kavely -> horisonttaalinen nopeus oli vahemman kuin 0.02 -> Lepo";
                 _runner.SetState(typeof(IdleState));

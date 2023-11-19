@@ -68,6 +68,7 @@ namespace StateMachine
         public override void FixedUpdate()
         {
             _col.VerticalRaycasts(_cc, _rayHeight);
+            _col.HorizontalRaycasts(-_sr.transform.localScale.x, _cc, .1f, false, false, true, true);
             _rb.velocity = new Vector2(0, -slideSpeed);
         }
 
@@ -79,8 +80,12 @@ namespace StateMachine
             if (_col.collisions.VerticalBottom) 
                 _runner.SetState(typeof(IdleState));
             if (_jump)
-                _runner.SetState(typeof(WallJumpState));
-
+                _runner.SetState(typeof(JumpState));
+            if (!_col.collisions.HorizontalUp && !_col.collisions.HorizontalUpLower)
+            {
+                _data.jumpsLeft -= 1;
+                _runner.SetState(typeof(FallState));
+            }
         }
 
         public override void Exit() {}

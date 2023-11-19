@@ -230,7 +230,6 @@
 
 //    void ChangeSoundState(AudioClip audioState, float volume, bool isLooping, bool overide = false)
 //    {
-//        //Debug.Log("Current state: " + currentAudioState + " New state: " + audioState.name);
 //        if (currentAudioState == audioState.name && !overide) return;
 //        source.Stop();
 //        source.clip = audioState;

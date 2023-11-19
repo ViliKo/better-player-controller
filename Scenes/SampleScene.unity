@@ -248,8 +248,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 123559098}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 6.36, y: 0.15, z: 0}
-  m_LocalScale: {x: 16.908876, y: 2.366999, z: 1}
+  m_LocalPosition: {x: 6.0885, y: -3.3799, z: 0}
+  m_LocalScale: {x: 9.849421, y: 2.9099886, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -1387,6 +1387,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 803c53b6bfa3497419ee22f7963e0f95, type: 2}
   - {fileID: 11400000, guid: 7ec2675aa02354e4083f0e8e65255582, type: 2}
   - {fileID: 11400000, guid: 5e427fa84082bda4d94da485a9cc6641, type: 2}
+  - {fileID: 11400000, guid: 521e0b0f94937f3489207819b7b39334, type: 2}
   PlayerSound: {fileID: 0}
   PersistentPlayerData: {fileID: 11400000, guid: 0b1c0515de5939146bcc29b4affddcab, type: 2}
   StateTransition: {fileID: 138185014}

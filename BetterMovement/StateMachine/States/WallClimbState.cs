@@ -63,7 +63,11 @@ namespace StateMachine
 
         public override void Update() {}
 
-        public override void FixedUpdate() => WallClimb();
+        public override void FixedUpdate() {
+
+            _col.HorizontalRaycasts(-_sr.transform.localScale.x, _cc, .1f, false, false, true, true);
+            WallClimb();
+        }
 
         
         public override void ChangeState()
@@ -72,6 +76,8 @@ namespace StateMachine
                 _runner.SetState(typeof(WallSlideState));
             if (_jump)  // jos painat hyppya mene seina hyppyyn
                 _runner.SetState(typeof(JumpState));
+            if (!_col.collisions.HorizontalUp && _col.collisions.HorizontalUpLower)
+                _runner.SetState(typeof(LedgeClimbState));
 
 
         }
