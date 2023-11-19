@@ -44,6 +44,7 @@ namespace StateMachine
 
             #endregion
 
+            _col.Reset();
             isClimbingCorner = true;
             _rb.velocity = Vector2.zero;
             _rb.gravityScale = 0;

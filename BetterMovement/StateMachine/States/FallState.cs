@@ -23,13 +23,10 @@ namespace StateMachine
         private float _dash;
         public float inputTreshold = .15f;
         public bool assistedOverCorner = false;
-        public float landingSlowdown = 0;
 
         [SerializeField]
         private bool visualizer = true;
 
-        [SerializeField]
-        private float _verticalMovement = 50f;
 
         [SerializeField]
         private float _rayHeight = .1f;
@@ -50,6 +47,8 @@ namespace StateMachine
             if (_data == null) _data = parent.PersistentPlayerData;
 
             #endregion
+
+            _col.Reset();
 
             _rb.gravityScale = 2;
             _pressedJump = false;

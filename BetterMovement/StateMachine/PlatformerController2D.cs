@@ -76,4 +76,14 @@ public class PlatformerController2D : MonoBehaviour
             PerformRaycast(originPosUpLower, wallraycast, cc.bounds.extents.x + length, ref collisions.HorizontalUpLower, debug);
 
     }
+
+    public void Reset()
+    {
+        collisions.HorizontalBottom = false;
+        collisions.HorizontalBottomUp = false;
+        collisions.HorizontalUp = false;
+        collisions.HorizontalUpLower = false;
+
+        collisions.VerticalBottom = false;
+    }
 }

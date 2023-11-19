@@ -16,5 +16,10 @@ namespace StateMachine
         public abstract void ChangeState();
         public abstract void Exit();
 
+        public virtual void SetParameters(params object[] parameters)
+        {
+            // This can be overridden by specific states to handle parameters
+        }
+
     }
 }

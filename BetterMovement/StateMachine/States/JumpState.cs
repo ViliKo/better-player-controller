@@ -71,6 +71,8 @@ namespace StateMachine
 
             #endregion
 
+            _col.Reset();
+
             Calculations();
             Jump();
 
