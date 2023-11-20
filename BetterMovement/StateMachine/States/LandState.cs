@@ -19,6 +19,7 @@ namespace StateMachine
         #endregion
 
         private float _xInput;
+        private bool _jump;
         public float inputTreshold = .15f;
         public float landingSlowdown = 0;
 
@@ -42,6 +43,7 @@ namespace StateMachine
 
             #endregion
 
+            _jump = false;
             _rb.gravityScale = 2;
             _landingExacuted = false;
             _isLandingFinished = false;
@@ -53,6 +55,9 @@ namespace StateMachine
         public override void CaptureInput()
         {
             _xInput = Input.GetAxis("Horizontal");
+
+            if (Input.GetButtonDown("Jump"))
+                _jump = true;
         }
 
 
@@ -88,13 +93,16 @@ namespace StateMachine
                 _isLandingFinished = false;
                 _data.jumpsLeft = _data.maxJumps;
 
-                if (Mathf.Abs(_xInput) > inputTreshold)
+                if (_jump)
+                    _runner.SetState(typeof(JumpState));
+                else if (Mathf.Abs(_xInput) > inputTreshold)
                     _runner.SetState(typeof(WalkState));
                 else
                     _runner.SetState(typeof(IdleState));
             }
             else if (!_col.collisions.VerticalBottom && _rb.velocity.y < 0)
                 _runner.SetState(typeof(FallState));
+           
         }
 
         public override void Exit()

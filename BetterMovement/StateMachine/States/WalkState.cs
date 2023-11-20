@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace StateMachine
 {
     [CreateAssetMenu(menuName = "States/Player/Walk")]
-    public class WalkState : State<PlayerController>
+    public class WalkState : PlayerStateWithMovement
     {
         #region Components
 
@@ -35,10 +35,7 @@ namespace StateMachine
         private float _xInput;
         private bool _jump;
         private bool _dash;
-        private float _dashInput;
-        private float _xInputInWholeNumber;
         private float _coyoteTimer;
-        private float _accelRate;
         private float _runDeccelAmount; //Actual force (multiplied with speedDiff) applied to the player .
         private float _runAccelAmount; //The actual force (multiplied with speedDiff) applied to the player.
 
@@ -62,8 +59,6 @@ namespace StateMachine
             _jump = false;
             _data.jumpsLeft = _data.maxJumps;
             _dash = false;
-            _dashInput = 0;
-            
 
             Calculations();
 
@@ -103,8 +98,8 @@ namespace StateMachine
 
         public override void FixedUpdate() {
             _col.VerticalRaycasts(_cc, rayHeight);
-            
-            Move();
+
+            Move(_xInput * runMaxSpeed, _runAccelAmount, _runDeccelAmount, _rb, walkAnimation.name, slideAnimation.name, _anim);
         }
 
         public override void ChangeState()
@@ -158,25 +153,7 @@ namespace StateMachine
 
         } // function
 
-        public void Move()
-        {
-            float targetSpeed = _xInput * runMaxSpeed;
-            float speedDif = targetSpeed - _rb.velocity.x;
-            
-            if (Mathf.Abs(targetSpeed) > 1f)
-            {
-                _anim.ChangeAnimationState(walkAnimation.name);
-                _accelRate = _runAccelAmount;
-            }
-            else
-            {
-                _anim.ChangeAnimationState(slideAnimation.name);
-                _accelRate = _runDeccelAmount;
-            }
 
-            float movement = speedDif * _accelRate;
-            _rb.AddForce(movement * Vector2.right * _rb.mass, ForceMode2D.Force);
-        }
 
         private void Calculations()
         {
