@@ -3,16 +3,14 @@ using UnityEngine;
 namespace StateMachine
 {
     [CreateAssetMenu(menuName = "States/Player/Jump")]
-    public class JumpState : State<PlayerController>
+    public class JumpState : PlayerStateWithMovement
     {
         #region Components
 
-        private Rigidbody2D _rb;
         private PlatformerController2D _col;
         private PersistentPlayerData _data;
         private CapsuleCollider2D _cc;
         private SpriteRenderer _sr;
-        private PlayerAnimation _anim;
 
         #endregion
 
@@ -38,17 +36,11 @@ namespace StateMachine
         public float timeUntilCheckGround = .3f;
         private float lastOnGround;
 
-
-        private float _accelRate;
-        private float _moveDeccelAmount; //Actual force (multiplied with speedDiff) applied to the player .
-        private float _moveAccelAmount; //The actual force (multiplied with speedDiff) applied to the player.
         private bool isOnGround = false;
 
 
 
 
-        [Range(0.01f, 1)] public float accelInAir; //Multipliers applied to acceleration rate when airborne.
-        [Range(0.01f, 1)] public float deccelInAir;
         public AnimationClip jumpAnimation;
         public float moveMaxSpeed = 8f; //Target speed we want the player to reach.
         public float moveAcceleration = 8f; //Time (approx.) time we want it to take for the player to accelerate from 0 to the runMaxSpeed.
@@ -64,16 +56,14 @@ namespace StateMachine
             base.Init(parent);
             if (_col == null) _col = parent.GetComponentInChildren<PlatformerController2D>();
             if (_cc == null) _cc = parent.GetComponentInChildren<CapsuleCollider2D>();
-            if (_rb == null) _rb = parent.GetComponentInChildren<Rigidbody2D>();
             if (_sr == null) _sr = parent.GetComponentInChildren<SpriteRenderer>();
-            if (_anim == null) _anim = parent.PlayerAnimation;
             if (_data == null) _data = parent.PersistentPlayerData;
 
             #endregion
 
             _col.Reset();
 
-            Calculations();
+
             Jump();
 
             if (visualizer)
@@ -104,7 +94,7 @@ namespace StateMachine
         public override void FixedUpdate() {
 
             _col.VerticalRaycasts(_cc, _rayHeight);
-            Move();
+            Move(_xInput * moveMaxSpeed, moveMaxSpeed, moveAcceleration, moveDecceleration);
         }
 
         public override void ChangeState()
@@ -182,35 +172,8 @@ namespace StateMachine
             _anim.ChangeAnimationState(jumpAnimation.name);
         }
 
-        private void Move()
-        {
-            float targetSpeed = _xInput * moveMaxSpeed;
-            float speedDif = targetSpeed - _rb.velocity.x;
 
 
-            if (Mathf.Abs(targetSpeed) > 1f)
-            {
-                _accelRate = _moveAccelAmount * accelInAir;
-            }
-            else
-            {
-                _accelRate = _moveDeccelAmount * deccelInAir;
-            }
-
-            float movement = speedDif * _accelRate;
-            _rb.AddForce(movement * Vector2.right * _rb.mass, ForceMode2D.Force);
-        }
-
-        private void Calculations()
-        {
-            _moveAccelAmount = (50 * moveAcceleration) / moveMaxSpeed;
-            _moveDeccelAmount = (50 * moveDecceleration) / moveMaxSpeed;
-
-            #region Variable Ranges
-            moveAcceleration = Mathf.Clamp(moveAcceleration, 0.01f, moveMaxSpeed);
-            moveDecceleration = Mathf.Clamp(moveDecceleration, 0.01f, moveMaxSpeed);
-            #endregion
-        }
 
     }
 }

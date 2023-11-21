@@ -8,12 +8,10 @@ namespace StateMachine
     {
         #region Components
 
-        private Rigidbody2D _rb;
         private PlatformerController2D _col;
         private PersistentPlayerData _data;
         private CapsuleCollider2D _cc;
         private SpriteRenderer _sr;
-        private PlayerAnimation _anim;
         private Text _transition;
         #endregion
 
@@ -36,8 +34,6 @@ namespace StateMachine
         private bool _jump;
         private bool _dash;
         private float _coyoteTimer;
-        private float _runDeccelAmount; //Actual force (multiplied with speedDiff) applied to the player .
-        private float _runAccelAmount; //The actual force (multiplied with speedDiff) applied to the player.
 
 
 
@@ -47,9 +43,7 @@ namespace StateMachine
             base.Init(parent);
             if (_col == null) _col = parent.GetComponentInChildren<PlatformerController2D>();
             if (_cc == null) _cc = parent.GetComponentInChildren<CapsuleCollider2D>();
-            if (_rb == null) _rb = parent.GetComponentInChildren<Rigidbody2D>();
             if (_sr == null) _sr = parent.GetComponentInChildren<SpriteRenderer>();
-            if (_anim == null) _anim = parent.PlayerAnimation;
             if (_data == null) _data = parent.PersistentPlayerData;
             if (_transition == null) _transition = parent.StateTransition;
 
@@ -60,8 +54,7 @@ namespace StateMachine
             _data.jumpsLeft = _data.maxJumps;
             _dash = false;
 
-            Calculations();
-
+ 
             if (visualizer)
                 _sr.color = Color.green;
             
@@ -76,10 +69,6 @@ namespace StateMachine
             {
                 _xInput = 0;
             }
-
-
-            
-            
 
 
             if (Input.GetAxisRaw("Dash") > dashInputTreshold)
@@ -99,8 +88,11 @@ namespace StateMachine
         public override void FixedUpdate() {
             _col.VerticalRaycasts(_cc, rayHeight);
 
-            Move(_xInput * runMaxSpeed, _runAccelAmount, _runDeccelAmount, _rb, walkAnimation.name, slideAnimation.name, _anim);
+            Move(_xInput * runMaxSpeed, runMaxSpeed, runAcceleration, runDecceleration, walkAnimation.name, slideAnimation.name);
         }
+
+
+
 
         public override void ChangeState()
         {
@@ -153,18 +145,6 @@ namespace StateMachine
 
         } // function
 
-
-
-        private void Calculations()
-        {
-            _runAccelAmount = (50 * runAcceleration) / runMaxSpeed;
-            _runDeccelAmount = (50 * runDecceleration) / runMaxSpeed;
-
-            #region Variable Ranges
-            runAcceleration = Mathf.Clamp(runAcceleration, 0.01f, runMaxSpeed);
-            runDecceleration = Mathf.Clamp(runDecceleration, 0.01f, runMaxSpeed);
-            #endregion
-        }
 
 
     }

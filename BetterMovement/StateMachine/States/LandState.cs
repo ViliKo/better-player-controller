@@ -43,6 +43,7 @@ namespace StateMachine
 
             #endregion
 
+
             _jump = false;
             _rb.gravityScale = 2;
             _landingExacuted = false;

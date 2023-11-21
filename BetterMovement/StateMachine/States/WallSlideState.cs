@@ -77,12 +77,13 @@ namespace StateMachine
         {
             if (_yInput > inputTreshold)
                 _runner.SetState(typeof(WallClimbState));
-            if (_col.collisions.VerticalBottom) 
+            else if (_col.collisions.VerticalBottom) 
                 _runner.SetState(typeof(IdleState));
-            if (_jump)
+            else if (_jump)
                 _runner.SetState(typeof(JumpState));
-            if (!_col.collisions.HorizontalUp && !_col.collisions.HorizontalUpLower)
+            else if (!_col.collisions.HorizontalUp && !_col.collisions.HorizontalUpLower)
             {
+                _col.Reset();
                 _data.jumpsLeft -= 1;
                 _runner.SetState(typeof(FallState));
             }

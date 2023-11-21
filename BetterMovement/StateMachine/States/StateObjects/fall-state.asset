@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputTreshold: 0.15
   assistedOverCorner: 0
-  landingSlowdown: 0.8
   visualizer: 0
-  _verticalMovement: 50
   _rayHeight: 0.1
   _pressedJump: 0
   _jumpBufferTime: 0.2
-  landAnimation: {fileID: 7400000, guid: 1de006e9c9f7c2b4f9f40c963699febd, type: 2}
+  moveMaxSpeed: 6
+  moveAcceleration: 2
+  moveDecceleration: 0.5
