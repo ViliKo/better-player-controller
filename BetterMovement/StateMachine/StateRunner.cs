@@ -6,21 +6,32 @@ using UnityEngine;
 
 namespace Utils.StateMachine
 {
-    [Serializable]
+
 
     public abstract class StateRunner<T> : MonoBehaviour where T : MonoBehaviour
     {
         [SerializeField]
         private List<State<T>> _states;
         private State<T> _activeState;
-
+        private CharacterMode _currentMode = CharacterMode.Normal;
         private CooldownManager _cooldownManager;
+        protected Vector2 _startPosition;
+
+
+        private float _spiritModeTimer = 0f;
+        private float _spiritModeDuration = 3f; // Adjust the duration as needed
 
         protected virtual void Awake()
         {
             _cooldownManager = new CooldownManager(); // New line
-
             SetState(_states[0].GetType());
+        }
+
+        public void SetMode(CharacterMode mode, Vector2 _startPosition)
+        {
+            _currentMode = mode;
+            transform.position = _startPosition;
+            // You might want to handle any specific logic for mode change here
         }
 
         public void SetState(Type newStateType, params object[] parameters)
@@ -30,7 +41,7 @@ namespace Utils.StateMachine
             
 
             _activeState = _states.First(s => s.GetType() == newStateType);
-            _activeState.Init(GetComponent<T>());
+            _activeState.Init(GetComponent<T>(), _currentMode);
 
             // Laita parametrit jos tila tukee niita
             _activeState.SetParameters(parameters);
@@ -40,6 +51,13 @@ namespace Utils.StateMachine
         {
             if (!_cooldownManager.IsAbilityOnCooldown(abilityType))
             {
+                if (abilityType == typeof(SpiritModeEnterState))
+                {
+                    SetMode(CharacterMode.Spirit, transform.position);
+                    _spiritModeTimer = _spiritModeDuration;
+                    _startPosition = transform.position;
+                }
+
                 SetState(abilityType, parameters);
                 _cooldownManager.StartCooldown(abilityType, cooldownTime);
             }
@@ -56,6 +74,18 @@ namespace Utils.StateMachine
             _activeState.CaptureInput();
             _activeState.Update();
             _cooldownManager.UpdateCooldowns();
+
+            if (_currentMode == CharacterMode.Spirit)
+            {
+                _spiritModeTimer -= Time.deltaTime;
+                if (_spiritModeTimer <= 0)
+                {
+                    SetMode(CharacterMode.Normal, _startPosition);
+                    // Additional logic for transitioning back to the normal mode
+                }
+            }
+
+
             _activeState.ChangeState();
 
 

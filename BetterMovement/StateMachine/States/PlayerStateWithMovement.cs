@@ -10,11 +10,10 @@ namespace StateMachine
 
         float _accelRate;
 
-        public override void Init(PlayerController parent)
+        public override void Init(PlayerController parent, CharacterMode characterMode)
         {
-            base.Init(parent);
+            base.Init(parent, characterMode);
 
-            // Retrieve the necessary components in the parent class
             _rb = parent.GetComponentInChildren<Rigidbody2D>();
             _anim = parent.PlayerAnimation;
         }
@@ -35,13 +34,15 @@ namespace StateMachine
             
             if (Mathf.Abs(targetSpeed) > 1f)
             {
-                _anim.ChangeAnimationState(anim1);
+                if (anim1 != null)
+                    _anim.ChangeAnimationState(anim1);
                 _accelRate = moveAccelAmount;
                 
             }
             else
             {
-                _anim.ChangeAnimationState(anim2);
+                if (anim1 != null)
+                    _anim.ChangeAnimationState(anim2);
                 _accelRate = moveDeccelAmount;
             }
 

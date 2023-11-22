@@ -1089,7 +1089,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 654414638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.34, y: 0.87, z: 0}
+  m_LocalPosition: {x: -4.81, y: 4.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1475,7 +1475,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 20
-  m_LinearDrag: 0.4
+  m_LinearDrag: 0.3
   m_AngularDrag: 0.05
   m_GravityScale: 2
   m_Material: {fileID: 6200000, guid: 4c8f5672d254bff42b8bf67d58286761, type: 2}
@@ -1522,6 +1522,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5e427fa84082bda4d94da485a9cc6641, type: 2}
   - {fileID: 11400000, guid: 521e0b0f94937f3489207819b7b39334, type: 2}
   - {fileID: 11400000, guid: b278de2664818894f9b78907368cf412, type: 2}
+  - {fileID: 11400000, guid: 40926b5ef211d7047b2f24d8f73f2b9d, type: 2}
   PlayerSound: {fileID: 0}
   PersistentPlayerData: {fileID: 11400000, guid: 0b1c0515de5939146bcc29b4affddcab, type: 2}
   StateTransition: {fileID: 138185014}

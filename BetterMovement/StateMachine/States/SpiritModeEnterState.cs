@@ -1,10 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace StateMachine
 {
-    [CreateAssetMenu(menuName = "States/Player/Walk")]
-    public class WalkState : PlayerStateWithMovement
+    [CreateAssetMenu(menuName = "States/Player/SpiritModeEnter")]
+
+
+    public class SpiritModeEnterState : PlayerStateWithMovement
     {
         #region Components
 
@@ -12,8 +15,11 @@ namespace StateMachine
         private PersistentPlayerData _data;
         private CapsuleCollider2D _cc;
         private SpriteRenderer _sr;
-        private Text _transition;
+
+
+
         #endregion
+
 
 
         [Header("Movement State settings")]
@@ -45,7 +51,6 @@ namespace StateMachine
             if (_cc == null) _cc = parent.GetComponentInChildren<CapsuleCollider2D>();
             if (_sr == null) _sr = parent.GetComponentInChildren<SpriteRenderer>();
             if (_data == null) _data = parent.PersistentPlayerData;
-            if (_transition == null) _transition = parent.StateTransition;
 
             #endregion
 
@@ -54,10 +59,10 @@ namespace StateMachine
             _data.jumpsLeft = _data.maxJumps;
             _dash = false;
 
- 
+
             if (visualizer)
                 _sr.color = Color.green;
-            
+
         }
 
         public override void CaptureInput()
@@ -65,7 +70,8 @@ namespace StateMachine
             if (Mathf.Abs(Input.GetAxis("Horizontal")) > xInputTreshold)
             {
                 _xInput = Input.GetAxis("Horizontal");
-            } else
+            }
+            else
             {
                 _xInput = 0;
             }
@@ -80,12 +86,14 @@ namespace StateMachine
 
         }
 
-        public override void Update() {
+        public override void Update()
+        {
             _anim.AdjustSpriteRotation(_xInput);
             CoyoteTimer();
         }
 
-        public override void FixedUpdate() {
+        public override void FixedUpdate()
+        {
             _col.VerticalRaycasts(_cc, rayHeight);
 
             Move(_xInput * runMaxSpeed, runMaxSpeed, runAcceleration, runDecceleration, walkAnimation.name, slideAnimation.name);
@@ -96,44 +104,37 @@ namespace StateMachine
 
         public override void ChangeState()
         {
-       
+
             if (Mathf.Abs(_rb.velocity.x) <= 0.3)
             {
-                _transition.text = "Kavely -> horisonttaalinen nopeus oli vahemman kuin 0.02 -> Lepo";
                 _runner.SetState(typeof(IdleState));
             }
-                
+
 
             if (_coyoteTimer < coyoteTime && _jump)
             {
-                _transition.text = "Kavely -> coyote ajastin oli pienempi kuin maaritetty aika ja hyppya on painettu -> Hyppy";
+
                 _runner.SetState(typeof(JumpState));
             }
-                
-            
-                
+
+
+
 
             if (!_col.collisions.VerticalBottom && !_jump)
             {
-                _transition.text = "Kavely -> maahan osoittava raycast ei osunut ja ei ole painanut hyppya -> Putoaminen";
+
                 _runner.SetState(typeof(FallState));
             }
 
 
-            if (_dash)
-            {
-                _transition.text = "Kavely -> dash nappia painettu -> Dash";
-                _dash = false;
-                _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
-            }
-                
-
+  
 
 
         }
 
 
-        public override void Exit() {
+        public override void Exit()
+        {
 
         }
 
@@ -147,5 +148,9 @@ namespace StateMachine
 
 
 
+
+
     }
+
 }
+

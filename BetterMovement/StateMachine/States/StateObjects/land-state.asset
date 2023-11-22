@@ -14,5 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputTreshold: 0.15
   landingSlowdown: 0.8
+  _rayHeight: 0.1
   visualizer: 0
   landAnimation: {fileID: 7400000, guid: 1de006e9c9f7c2b4f9f40c963699febd, type: 2}
+  moveMaxSpeed: 5
+  moveAcceleration: 2
+  moveDecceleration: 0.5

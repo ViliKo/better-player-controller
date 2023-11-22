@@ -50,10 +50,10 @@ namespace StateMachine
 
 
 
-        public override void Init(PlayerController parent)
+        public override void Init(PlayerController parent, CharacterMode characterMode)
         {
             #region Get Components
-            base.Init(parent);
+            base.Init(parent, characterMode);
             if (_col == null) _col = parent.GetComponentInChildren<PlatformerController2D>();
             if (_cc == null) _cc = parent.GetComponentInChildren<CapsuleCollider2D>();
             if (_sr == null) _sr = parent.GetComponentInChildren<SpriteRenderer>();

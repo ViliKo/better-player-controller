@@ -5,16 +5,14 @@ using UnityEngine;
 namespace StateMachine
 {
     [CreateAssetMenu(menuName = "States/Player/Land")]
-    public class LandState : State<PlayerController>
+    public class LandState : PlayerStateWithMovement
     {
         #region Components
 
-        private Rigidbody2D _rb;
         private PlatformerController2D _col;
         private PersistentPlayerData _data;
         private CapsuleCollider2D _cc;
         private SpriteRenderer _sr;
-        private PlayerAnimation _anim;
 
         #endregion
 
@@ -24,21 +22,27 @@ namespace StateMachine
         public float landingSlowdown = 0;
 
         [SerializeField]
+        private float _rayHeight = .1f;
+
+        [SerializeField]
         private bool visualizer = true;
         private bool _landingExacuted;
         private bool _isLandingFinished;
         public AnimationClip landAnimation;
 
+        public float moveMaxSpeed = 8f; //Target speed we want the player to reach. asd
+        public float moveAcceleration = 8f; //Time (approx.) time we want it to take for the player to accelerate from 0 to the runMaxSpeed.
+        public float moveDecceleration = 0.5f; //Time (approx.) we want it to take for the player to accelerate from runMaxSpeed to 0.
 
-        public override void Init(PlayerController parent)
+
+
+        public override void Init(PlayerController parent, CharacterMode characterMode)
         {
             #region Get Components
-            base.Init(parent);
+            base.Init(parent, characterMode);
             if (_col == null) _col = parent.GetComponentInChildren<PlatformerController2D>();
             if (_cc == null) _cc = parent.GetComponentInChildren<CapsuleCollider2D>();
-            if (_rb == null) _rb = parent.GetComponentInChildren<Rigidbody2D>();
             if (_sr == null) _sr = parent.GetComponentInChildren<SpriteRenderer>();
-            if (_anim == null) _anim = parent.PlayerAnimation;
             if (_data == null) _data = parent.PersistentPlayerData;
 
             #endregion
@@ -72,7 +76,11 @@ namespace StateMachine
 
         public override void FixedUpdate()
         {
+            _col.VerticalRaycasts(_cc, _rayHeight);
             Land();
+            
+            Move(_xInput * moveMaxSpeed, moveMaxSpeed, moveAcceleration, moveDecceleration);
+
         }
 
         private void Land()
@@ -111,6 +119,8 @@ namespace StateMachine
             _landingExacuted = false;
             _isLandingFinished = false;
         }
+
+
     }
 }
 

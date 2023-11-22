@@ -9,9 +9,9 @@ namespace StateMachine
         private float hurtTimer;
         private int damageTaken;
 
-        public override void Init(PlayerController parent)
+        public override void Init(PlayerController parent, CharacterMode characterMode)
         {
-            base.Init(parent);
+            base.Init(parent, characterMode);
         }
 
         public override void SetParameters(params object[] parameters)
@@ -36,7 +36,7 @@ namespace StateMachine
 
         public override void Exit()
         {
-            // Clean up or reset any state-specific variables
+ 
         }
 
         public override void CaptureInput()
