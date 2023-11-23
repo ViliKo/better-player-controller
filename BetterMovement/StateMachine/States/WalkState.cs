@@ -35,6 +35,9 @@ namespace StateMachine
         private bool _dash;
         private float _coyoteTimer;
 
+        private float selectedInputTreshold = .15f;
+        private bool _spiritState;
+
 
 
         public override void Init(PlayerController parent, CharacterMode characterMode)
@@ -53,6 +56,7 @@ namespace StateMachine
             _jump = false;
             _data.jumpsLeft = _data.maxJumps;
             _dash = false;
+            _spiritState = false;
 
  
             if (visualizer)
@@ -75,6 +79,13 @@ namespace StateMachine
             {
                 _dash = true;
             }
+
+    
+            if (Input.GetAxisRaw("Select") > selectedInputTreshold && Input.GetKey(KeyCode.Joystick1Button3))
+            {
+                _spiritState = true;
+            }
+
             if (Input.GetButtonDown("Jump"))
                 _jump = true;
 
@@ -125,6 +136,12 @@ namespace StateMachine
                 _transition.text = "Kavely -> dash nappia painettu -> Dash";
                 _dash = false;
                 _runner.ActivateAbility(typeof(DashState), _data.dashCooldown);
+                
+            }
+
+            if (_spiritState)
+            {
+                _runner.ActivateAbility(typeof(SpiritModeEnterState), 10f);
             }
                 
 

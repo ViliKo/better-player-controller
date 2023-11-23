@@ -82,6 +82,7 @@ namespace Utils.StateMachine
                 {
                     SetMode(CharacterMode.Normal, _startPosition);
                     // Additional logic for transitioning back to the normal mode
+                    Destroy(GameObject.FindGameObjectWithTag("freezeFrame"));
                 }
             }
 

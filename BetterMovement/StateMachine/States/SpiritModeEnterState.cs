@@ -41,6 +41,9 @@ namespace StateMachine
         private bool _dash;
         private float _coyoteTimer;
 
+        private GameObject freezeFrame;
+
+
 
 
         public override void Init(PlayerController parent, CharacterMode characterMode)
@@ -53,6 +56,16 @@ namespace StateMachine
             if (_data == null) _data = parent.PersistentPlayerData;
 
             #endregion
+            freezeFrame = new GameObject();
+            freezeFrame.tag = "freezeFrame";
+            freezeFrame.transform.position = _rb.position;
+            freezeFrame.transform.localScale = new Vector3(_rb.transform.localScale.x, _rb.transform.localScale.y);
+            freezeFrame.AddComponent<SpriteRenderer>();
+            freezeFrame.GetComponent<SpriteRenderer>().sprite = _sr.sprite;
+
+            Debug.Log(freezeFrame);
+
+
 
             _coyoteTimer = 0;
             _jump = false;
@@ -135,7 +148,7 @@ namespace StateMachine
 
         public override void Exit()
         {
-
+            
         }
 
 
